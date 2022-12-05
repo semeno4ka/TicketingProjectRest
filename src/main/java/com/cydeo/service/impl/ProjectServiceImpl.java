@@ -103,7 +103,7 @@ public class ProjectServiceImpl implements ProjectService {
     public List<ProjectDTO> listAllProjectDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SimpleKeycloakAccount details = (SimpleKeycloakAccount) authentication.getDetails();
-        String username=details.getKeycloakSecurityContext().getToken().getPreferredUsername();// get info from user authorization token
+        String username=details.getKeycloakSecurityContext().getToken().getPreferredUsername();// get info from user authorization token- who is the person
 
         UserDTO currentUserDTO = userService.findByUserName(username);
 
