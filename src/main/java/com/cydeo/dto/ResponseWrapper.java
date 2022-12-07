@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)// if is null, do not show
+@Builder
 public class ResponseWrapper {//customized json
 
     private boolean success;
