@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     private static final String OAUTH_SCHEME_NAME = "oAuth";
-    private static final String PROTOCOL_URL_FORMAT = "%s/realms/%s/protocol/openid-connect";
+    private static final String PROTOCOL_URL_FORMAT = "%s/realms/%s/protocol/openid-connect";// comes from documentation
 
     private final KeycloakProperties keycloakProperties;
 
@@ -23,7 +23,7 @@ public class SwaggerConfig {
         this.keycloakProperties = keycloakProperties;
     }
 
-    @Bean
+    @Bean// Required to connect SwaggerDocumetnatio with OAuth security
     public OpenAPI customOpenApi() {
         return new OpenAPI()
                 .info(getInfo())
@@ -51,7 +51,7 @@ public class SwaggerConfig {
         OAuthFlow flow = createAuthorizationCodeFlow();
 
         return new OAuthFlows()
-                .authorizationCode(flow);
+                .authorizationCode(flow);// describes the grant-type we use, since swagger is UI we need AuthorizationCodeGrantType
     }
 
     private OAuthFlow createAuthorizationCodeFlow() {

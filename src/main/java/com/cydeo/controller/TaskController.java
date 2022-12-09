@@ -24,14 +24,14 @@ public class TaskController {
     }
     @GetMapping
     @RolesAllowed("Manager")
-    @Operation(summary = "Get task")
+    @Operation(summary = "Retrieve task")
     public ResponseEntity<ResponseWrapper> getTasks(){
         return ResponseEntity.ok(new ResponseWrapper("List of all tasks", taskService.listAllTasks(), HttpStatus.OK));
     }
 
     @GetMapping("/{id}")
     @RolesAllowed("Manager")
-    @Operation(summary = "Get task by id")
+    @Operation(summary = "Retrieve task by id")
     public ResponseEntity<ResponseWrapper> getTaskById(@PathVariable("id") Long id){
         return ResponseEntity.ok(new ResponseWrapper("Retrieve task by id", taskService.findById(id), HttpStatus.OK));
     }
@@ -64,12 +64,14 @@ public class TaskController {
     }
     @PutMapping("/employee/update")
     @RolesAllowed("Employee")
+    @Operation(summary = "Employee update task")
     public ResponseEntity<ResponseWrapper> employeeUpdateTasks(@RequestBody TaskDTO task){
         taskService.update(task);
         return ResponseEntity.ok(new ResponseWrapper("Task us updated", HttpStatus.OK));
 }
     @GetMapping ("/employee/archive/")
     @RolesAllowed("Employee")
+    @Operation(summary = "Employee archive task")
     public ResponseEntity<ResponseWrapper> employeeArchiveTasks(){
         return ResponseEntity.ok(new ResponseWrapper("Archive tasks", taskService.listAllTasksByStatus(Status.COMPLETE), HttpStatus.OK));
 }

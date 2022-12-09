@@ -26,14 +26,14 @@ public class UserController {
 
     @GetMapping()
     @RolesAllowed({"Manager", "Admin"})
-    @Operation(summary = "Get user")
+    @Operation(summary = "Retrieve users")
     public ResponseEntity<ResponseWrapper> getUsers(){
         List<UserDTO> userDTOList=userService.listAllUsers();
         return ResponseEntity.ok(new ResponseWrapper("List of Users retrieved",userDTOList, HttpStatus.OK));
     }
     @GetMapping("/{username}")
     @RolesAllowed("Admin")
-    @Operation(summary = "Get user by username")
+    @Operation(summary = "Retrieve user by username")
     public ResponseEntity<ResponseWrapper> getUserByUserName(@PathVariable("username") String username){
         return ResponseEntity.ok(new ResponseWrapper("User retrieved successfully", userService.findByUserName(username),HttpStatus.OK));
     }
