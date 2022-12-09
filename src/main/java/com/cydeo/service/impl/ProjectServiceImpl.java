@@ -63,13 +63,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void update(ProjectDTO dto) {
-
+        //we bring project which has same ID as our DTO project
         Project project = projectRepository.findByProjectCode(dto.getProjectCode());
-
+        //we assign new project, with all the fields that DTO has to swap previous to new.
+        //Question. Why don't we reset all teh fields? There is a chance for a change, like assigned manager as well?
         Project convertedProject = projectMapper.convertToEntity(dto);
-
+        // we set ID of previous entity for the object to stay the same as previous
         convertedProject.setId(project.getId());
-
+        // we change the status
         convertedProject.setProjectStatus(project.getProjectStatus());
 
         projectRepository.save(convertedProject);
