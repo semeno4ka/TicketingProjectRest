@@ -2,6 +2,7 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.RoleDTO;
+import com.cydeo.dto.TestResponseDTO;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.enums.Gender;
 import com.cydeo.enums.Status;
@@ -14,9 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
 import java.time.LocalDate;
@@ -38,7 +42,7 @@ class ProjectControllerTest {
 
     @BeforeAll
     static void setUp(){//to create some sample data to use for testing
-        token="Bearer "+ "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJZVmw4V2tqQzBmcjFRdXBUWW9mdEZ1RXU5dFNjdzFLQlF2U3JPZTA0R0hVIn0.eyJleHAiOjE2NzE0MjMwMzYsImlhdCI6MTY3MTQwNTAzNiwianRpIjoiYmZmZTA0MmMtZGYwNy00MGZhLWFjOTEtOGZmYmIzMzAwODY1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2F1dGgvcmVhbG1zL2N5ZGVvLWRldiIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI2MTUxOTdlOS01ZWVmLTRjZWItODQ2NC0xNzk1NDgwZGFiNGUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJ0aWNrZXRpbmctYXBwIiwic2Vzc2lvbl9zdGF0ZSI6ImI5MTYxOWM0LTNiOTctNGQ3Yi1hNDdlLTZkMzlkNGRiZmI5NSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo4MDgxIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1jeWRlby1kZXYiXX0sInJlc291cmNlX2FjY2VzcyI6eyJ0aWNrZXRpbmctYXBwIjp7InJvbGVzIjpbIk1hbmFnZXIiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJiOTE2MTljNC0zYjk3LTRkN2ItYTQ3ZS02ZDM5ZDRkYmZiOTUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicHJlZmVycmVkX3VzZXJuYW1lIjoib3p6eSJ9.gorrjYYPpQVlRf6Z55bg6mj1CsZznDLrrbFV400Fk_dhib9ncXpfjFSSFKoiDfbGAQWSNX76f3OYBZvtNVTp7c1icNe05W8vknPMEujz_RrD95IukC_MkEoMU0YD_BUm0ICZmxHDGTM3ZqeP88fGvGoqerfwjht7N0qh2agZhVsr9zB_ZWoUj4Cydjhn7AaVNt10Zuc-HBykBWw1-ds5FiE_TrdpG48iYxx-iq6NxEuQYR7ERJdLoznFg8K2QArmhxNZT3P4MHO2rVgABIGsJDga2zvi57gRvlnWv3oK9x4zKUFMByMgoBZghXderZJ2MiXZ6X_aJ69YUi3zbjvw1w";
+        token="Bearer "+ getToken();
       manager =new UserDTO(2L, "","","ozzy","abc1","", true,"", new RoleDTO(2L,"Manager"), Gender.MALE);
 
       project = new ProjectDTO("ApII Project","PR001", manager, LocalDate.now(),LocalDate.now().plusDays(5),"Some details", Status.OPEN);
@@ -107,5 +111,38 @@ class ProjectControllerTest {
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);//to place dates without times
         objectMapper.registerModule(new JavaTimeModule());//change default 2022,12,18 -> 2022/12/18
         return objectMapper.writeValueAsString(obj);
+    }
+
+    //Ready Code to skip manual token pass
+    private static String getToken() {
+
+        RestTemplate restTemplate = new RestTemplate();//real api request send to keycloak
+
+        HttpHeaders headers = new HttpHeaders();//get token
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();//assign properties
+
+        map.add("grant_type", "password");
+        map.add("client_id", "ticketing-app");
+        map.add("client_secret", "9kyDRsp1GJD6ZnY4hedkAJr5ziY6Snoe");
+        map.add("username", "ozzy");
+        map.add("password", "abc1");
+        map.add("scope", "openid");
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
+
+        ResponseEntity<TestResponseDTO> response =
+                restTemplate.exchange("http://localhost:8080/auth/realms/cydeo-dev/protocol/openid-connect/token",
+                        HttpMethod.POST,
+                        entity,
+                        TestResponseDTO.class);
+
+        if (response.getBody() != null) {
+            return response.getBody().getAccess_token();
+        }
+
+        return "";
+
     }
 }
