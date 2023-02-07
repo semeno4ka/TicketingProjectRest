@@ -34,18 +34,21 @@ class ProjectControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
-    static UserDTO manager;//we create this fields because we will use @BeforeAll methods which are static and require static member
+    static UserDTO manager;
+    //we create static fields because we will use
+    // @BeforeAll methods which are static and require static member
     static ProjectDTO project;
     //hardcoded token use
     static String token;
 
-    @BeforeAll
-    static void setUp(){//to create some sample data to use for testing
-        token="Bearer "+ getToken();
-      manager =new UserDTO(2L, "","","ozzy","abc1","", true,"", new RoleDTO(2L,"Manager"), Gender.MALE);
+    @BeforeAll //to create some sample data to use for testing
+    static void setUp(){
+        token="Bearer "+ getToken();// separate method created in the class
+      manager =new UserDTO(2L, "","","ozzy","abc1","",
+              true,"", new RoleDTO(2L,"Manager"), Gender.MALE);
 
-      project = new ProjectDTO("ApII Project","PR001", manager, LocalDate.now(),LocalDate.now().plusDays(5),"Some details", Status.OPEN);
+      project = new ProjectDTO("ApII Project","PR001", manager,
+              LocalDate.now(),LocalDate.now().plusDays(5),"Some details", Status.OPEN);
     }
 
     @Test
@@ -60,8 +63,9 @@ class ProjectControllerTest {
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/project")
                 .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].projectCode").exists())// to get inside json and check required field match->jayway -jsonpath (git repo)
-                                    //data comes from our response wrapper field which has a list of Projects-> give me the 1st element projectCode
+                .andExpect(jsonPath("$.data[0].projectCode").exists())
+                // to get inside json and check required field match->Jway -jsonpath (git repo)
+                //data comes from our response wrapper field which has a list of Projects-> give me the 1st element projectCode
                 .andExpect(jsonPath("$.data[0].assignedManager.userName").exists())
                 .andExpect(jsonPath("$.data[0].assignedManager.userName").isNotEmpty())
                 .andExpect(jsonPath("$.data[0].assignedManager.userName").isString())
@@ -96,7 +100,8 @@ class ProjectControllerTest {
    @Test
    void givenToken_deleteProject() throws Exception {
 
-        mvc.perform(MockMvcRequestBuilders.delete("/api/v1/project/" + project.getProjectCode())//since it ProjectCode is string parameter we can concatenate it
+        mvc.perform(MockMvcRequestBuilders.delete("/api/v1/project/" + project.getProjectCode())
+                 //since it ProjectCode is string parameter we can concatenate it
                 .header("Authorization",token)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

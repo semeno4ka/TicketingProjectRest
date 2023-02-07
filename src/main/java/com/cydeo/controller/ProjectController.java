@@ -2,7 +2,6 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.ResponseWrapper;
-import com.cydeo.dto.UserDTO;
 import com.cydeo.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
