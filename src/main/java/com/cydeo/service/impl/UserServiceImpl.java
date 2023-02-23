@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(obj);
 
-        keycloakService.userCreate(user);
+        keycloakService.userCreate(user);// ALWAYS save to Keycloak, it saves only relevant to its business info
 
     }
 
