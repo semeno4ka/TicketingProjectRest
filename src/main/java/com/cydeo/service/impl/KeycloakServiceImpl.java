@@ -52,9 +52,9 @@ public class KeycloakServiceImpl implements KeycloakService {
         UsersResource usersResource = realmResource.users();
 
         // Create Keycloak user
-        Response result = usersResource.create(keycloakUser);//comes from keycloak dependency
+        Response result = usersResource.create(keycloakUser);//comes from keycloak dependency and creates the user we set up above
 
-        String userId = getCreatedId(result);// retrieve ID from created user in keycloak
+        String userId = getCreatedId(result);// retrieve ID from created user from keycloak unique ID in user table
         ClientRepresentation appClient = realmResource.clients()
                 .findByClientId(keycloakProperties.getClientId()).get(0);
 
@@ -78,13 +78,13 @@ public class KeycloakServiceImpl implements KeycloakService {
         UsersResource usersResource = realmResource.users();
 
         List<UserRepresentation> userRepresentations = usersResource.search(userName);
-        String uid = userRepresentations.get(0).getId();
-        usersResource.delete(uid);
+        String uid = userRepresentations.get(0).getId();//based on unique id in keycloak user table
+        usersResource.delete(uid);// userResource can create and delete ID
 
         keycloak.close();
     }
 
-    private Keycloak getKeycloakInstance(){
+    private Keycloak getKeycloakInstance(){// all fields from keycloak property class
         return Keycloak.getInstance(keycloakProperties.getAuthServerUrl(),
                 keycloakProperties.getMasterRealm(), keycloakProperties.getMasterUser()
                 , keycloakProperties.getMasterUserPswd(), keycloakProperties.getMasterClient());

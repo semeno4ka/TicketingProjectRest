@@ -1,4 +1,5 @@
 package com.cydeo.dto;
+
 import com.cydeo.enums.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
